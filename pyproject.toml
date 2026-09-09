@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ns-pydm"
+version = "0.0.16"
+description = "达梦数据库 DB-API 2.0 驱动 — macOS 用原生 dmclient，非 macOS 透传官方 dmPython"
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.7"
+
+[project.optional-dependencies]
+# 非 macOS 系统（Linux/Windows）需要安装 dmPython
+dmpython = ["dmPython"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# dmclient 原生可执行文件（macOS 后端）由 https://github.com/navysummer/dm-client/releases 维护，不打包进 Python 包
+
+# ---------------------------------------------------------------------------
+# Linter / Formatter 配置
+# ---------------------------------------------------------------------------
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "B", "UP", "SIM"]
+ignore = ["E501", "F405"]  # E501: black 接管行长度; F405: dbapi 后端动态路由
+
+[tool.isort]
+profile = "black"
+line-length = 100
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+show_error_codes = true
+ignore_missing_imports = true
+warn_unused_ignores = false
+
+[[tool.mypy.overrides]]
+module = "nspydm.dbapi"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "nspydm._backends.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "nspydm.native.*"
+ignore_errors = true
